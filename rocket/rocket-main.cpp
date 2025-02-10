@@ -20,17 +20,17 @@ RocketModel::~RocketModel() {}
 class ComparingRocketModel : public RocketModel {
 public:
   std::vector<std::unique_ptr<RocketModel>> models;
-  size_t cycle = 0;
+  size_t half_cycle = 0;
   size_t num_mismatches = 0;
 
   virtual ~ComparingRocketModel() {
     std::cerr << "----------------------------------------\n";
-    std::cerr << cycle << " cycles total\n";
+    std::cerr << half_cycle / 2 << " cycles total\n";
     for (auto &model : models) {
       auto seconds = std::chrono::duration_cast<std::chrono::duration<double>>(
                          model->duration)
                          .count();
-      std::cerr << model->name << ": " << (cycle / seconds) << " Hz\n";
+      std::cerr << model->name << ": " << (half_cycle / 2.0 / seconds) << " Hz\n";
     }
   }
 
@@ -44,19 +44,23 @@ public:
     }
   }
 
-  void vcd_dump(size_t cycle) override {
+  void vcd_dump(size_t t) override {
     for (auto &model : models)
-      model->vcd_dump(cycle);
+      model->vcd_dump(t);
   }
 
   void clock() {
     compare_ports();
-    vcd_dump(cycle);
+
+    vcd_dump(half_cycle);
+    ++half_cycle;
     set_clock(true);
     eval();
+
+    vcd_dump(half_cycle);
+    ++half_cycle;
     set_clock(false);
     eval();
-    ++cycle;
   }
 
   void eval() override {
@@ -110,7 +114,7 @@ public:
         if (portsA[portIdx] == portsB[portIdx])
           continue;
         ++num_mismatches;
-        std::cerr << "cycle " << cycle << ": mismatching " << std::hex
+        std::cerr << "cycle " << half_cycle / 2 << ": mismatching " << std::hex
                   << PORT_NAMES[portIdx] << ": " << portsA[portIdx] << " ("
                   << models[0]->name << ") != " << portsB[portIdx] << " ("
                   << models[modelIdx]->name << ")\n"

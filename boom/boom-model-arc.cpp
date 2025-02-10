@@ -18,9 +18,9 @@ public:
         new ValueChangeDump<BoomSystemLayout>(model.vcd(vcd_stream)));
   }
 
-  void vcd_dump(size_t cycle) override {
+  void vcd_dump(size_t t) override {
     if (model_vcd) {
-      model_vcd->time = cycle;
+      model_vcd->time = t;
       model_vcd->writeTimestep(0);
     }
   }

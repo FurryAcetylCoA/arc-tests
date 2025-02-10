@@ -24,9 +24,9 @@ public:
     model_vcd->open(outputFile);
   }
 
-  void vcd_dump(size_t cycle) override {
+  void vcd_dump(size_t t) override {
     if (model_vcd)
-      model_vcd->dump(static_cast<uint64_t>(cycle));
+      model_vcd->dump(static_cast<uint64_t>(t));
   }
 
   void eval() override { model.eval(); }

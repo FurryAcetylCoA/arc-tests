@@ -65,7 +65,7 @@ public:
   virtual ~BoomModel();
 
   virtual void vcd_start(const char *outputFile) {}
-  virtual void vcd_dump(size_t cycle) {}
+  virtual void vcd_dump(size_t t) {}
   virtual void eval() {}
   virtual Ports get_ports() { return {}; }
   virtual void set_clock(bool clock) {}
